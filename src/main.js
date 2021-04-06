@@ -6,8 +6,8 @@ import router from './router'
 import store from './store'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faUser, faCoins, faList, faRedoAlt } from '@fortawesome/free-solid-svg-icons'
+import { faUser, faCoins, faList, faRedoAlt, faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
-library.add(faUser, faCoins, faList, faRedoAlt);
+library.add(faUser, faCoins, faList, faRedoAlt, faArrowLeft);
 createApp(App).component("font-awesome-icon", FontAwesomeIcon).use(store).use(router).mount('#app');
