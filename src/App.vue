@@ -4,7 +4,7 @@
       {{ title }}
     </div>
     <div id="content" class="w-full h-full flex-grow overflow-auto">
-      <router-view @setViewData="setViewData" :loading="loading" :error="error" :data="data"/>
+      <router-view @setViewData="setViewData" :loading="loading" :error="error" :data="data" :ip="IP"/>
     </div>
     <div id="navbar" class="h-20 flex border-t-2 border-black">
       <NavbarButton
@@ -26,12 +26,21 @@
         no-border
       />
     </div>
+    <PWAInstallBtn
+      v-if="pwaInstallVisibility"
+      @close="pwaInstallVisibility = false"
+      @install="installPwa"
+    />
   </div>
 </template>
 
 <script>
 import NavbarButton from "@/components/NavbarButton";
+import PWAInstallBtn from "@/components/PWAInstallBtn";
 import axiosGet from "@/utils/axiosGet";
+
+const IP = '192.168.0.133';
+const BASE_URL = 'http://' + IP + ':3000/';
 const LINKS = {
   MY_OFFERS: {
     id: 'myoffers',
@@ -57,7 +66,10 @@ const LINKS = {
 };
 
 export default {
-  components: {NavbarButton},
+  components: {
+    NavbarButton,
+    PWAInstallBtn,
+  },
   data () {
     return {
       LINKS: LINKS,
@@ -66,6 +78,8 @@ export default {
       error: false,
       title: LINKS.MY_OFFERS.title,
       selected: LINKS.MY_OFFERS.id,
+      pwaInstallVisibility: true,
+      IP
     };
   },
   methods: {
@@ -83,19 +97,41 @@ export default {
       this.error = null;
       this.loading = true;
       try {
-        const response = await axiosGet(path);
+        const response = await axiosGet(BASE_URL + path);
         this.data = response.data;
+        this.loading = false;
       } catch {
         this.error = true;
+        this.loading = false;
+        await this.$router.push('/profile');
       }
-      this.loading = false;
     },
     refresh () {
       this.setViewData(this.selected);
     },
-    created () {
-      this.setViewData(LINKS.MY_OFFERS.id);
-    }
+    installPwa () {
+      this.pwaInstallVisibility = false;
+      if(!this.installPrompt) {
+        return;
+      }
+      this.installPrompt.prompt();
+      this.installPrompt.userChoice.then(result => {
+        if(result.outcome !== "accepted") {
+          this.pwaInstallVisibility = true
+        }
+        this.installPrompt = null;
+      });
+    },
+  },
+  mounted() {
+    this.setViewData(LINKS.MY_OFFERS.id);
+  },
+  created () {
+    window.addEventListener("beforeinstallprompt", e => {
+      e.preventDefault();
+      this.installPrompt = e;
+      this.pwaInstallVisibility = true;
+    });
   }
 }
 </script>

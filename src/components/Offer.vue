@@ -3,7 +3,7 @@
     <div class="flex flex-col h-full" v-if="!showItems">
       <div class="flex-grow flex justify-between items-center text-white">
         <div class="flex flex-col text-center items-center">
-          <img :src="offer.owner.avatar" class="overflow-hidden rounded-full border border-blue-800 w-10" alt="profile_pic">
+          <img :src="offer.owner.avatar" class="overflow-hidden rounded-full border border-blue-800" alt="profile_pic" width="50" height="50">
           <div class="text-center font-medium">{{ offer.owner.name }}</div>
         </div>
         <div class="flex flex-col text-center items-center">
@@ -16,7 +16,7 @@
         </div>
       </div>
       <div class="flex">
-        <div class="bg-yellow-400 p-2 flex-grow text-xs2 flex justify-center items-center" :class="copyLinkActive ? 'bg-green-600' : 'bg-yellow-400'" @click.prevent="copyLink">{{ offer.id }}</div>
+        <div class="bg-yellow-400 p-2 flex-grow text-xs flex justify-center items-center" :class="copyLinkActive ? 'bg-green-600' : 'bg-yellow-400'" @click.prevent="copyLink">{{ offer.id }}</div>
         <div class="p-4 border-2 border-blue-400 flex justify-center items-center text-white text-xs" @click.prevent="toggleItemView">ITEMS</div>
       </div>
     </div>

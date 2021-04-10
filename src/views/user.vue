@@ -1,7 +1,7 @@
 <template>
   <LoadingPlaceholder :loading="loading">
     <div v-if="error" class="flex justify-center items-center h-full w-full">
-      <a href="http://localhost:3000/login">
+      <a aria-label="login through steam" :href="`http://${ip}:3000/login`">
         <img
             src="https://community.cloudflare.steamstatic.com/public/images/signinthroughsteam/sits_02.png"
             alt="loginPicture"
@@ -38,6 +38,10 @@ export default {
       default: () => ({})
     },
     error: Boolean,
+    ip: {
+      type: String,
+      default: '',
+    }
   },
   computed: {
     buttonStyle () {
@@ -45,21 +49,21 @@ export default {
     }
   },
   methods: {
+    logout() {
+      localStorage.removeItem('jwtToken');
+      this.$emit('setViewData', 'userprofile');
+    },
     initJWT() {
       const token = this.$route.query.token;
       if(token) {
         localStorage.setItem('jwtToken', token);
-        this.$router.push('/profile');
+        this.$router.push('/owned');
       }
     },
-    logout() {
-      localStorage.removeItem('jwtToken');
-      this.$emit('setViewData', 'userprofile');
-    }
   },
   async mounted() {
-    document.title = "User Profile";
     this.initJWT();
+    document.title = "User Profile";
     this.$emit('setViewData', 'userprofile');
   }
 }
